@@ -1,16 +1,32 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
 
 # Read the source file into var activity
-```{r}
+
+```r
 library(dplyr)
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 library(lattice)
 unzip("activity.zip", overwrite = TRUE)
 rawsrc <- read.csv("activity.csv", na.strings = "", stringsAsFactors = FALSE)
@@ -23,25 +39,31 @@ activity$date <- as.Date(activity$date)
 
 ## What is mean total number of steps taken per day?
 
-```{r}
+
+```r
 ## Calculate the total number of steps taken per day
 daysum <- group_by(activity, date) %>%
   summarise(steps=sum(steps, na.rm=TRUE))
 
 ## Make a histogram of the total number of steps taken each day
 hist(daysum$steps)
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+```r
 ## Calculate and report the mean and median of the total number of steps taken per day
 total.nos.mean <- as.integer(round(mean(daysum$steps, na.rm=TRUE),0))
 total.nos.median <- as.integer(round(median(daysum$steps, na.rm=TRUE),0))
 ```
 
-The calculation of the total number of steps has a **mean of `r total.nos.mean`** and a **median of `r total.nos.median`**. 
+The calculation of the total number of steps has a **mean of 9354** and a **median of 10395**. 
 
 
 ## What is the average daily activity pattern?
 
-```{r}
+
+```r
 ## Make a time series plot (i.e. 𝚝𝚢𝚙𝚎 = "𝚕") of the 5-minute interval
 ## (x-axis) and the average number of steps taken, averaged across all days
 ## (y-axis)
@@ -52,18 +74,23 @@ plot(avgsteps$interval,avgsteps$avg_steps, type="l",
      main="Average steps per interval",
      xlab="Interval", ylab="Average # of steps",
      col="blue")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+```r
 ## Which 5-minute interval, on average across all the days in the dataset,
 ## contains the maximum number of steps?
 nos.max <- top_n(avgsteps,1,avg_steps)
 ```
 
-The 5-minute interval with the maximum number of steps based on this set with 2 months of data appears to be on `r nos.max$interval`
+The 5-minute interval with the maximum number of steps based on this set with 2 months of data appears to be on 835
 
 
 ## Imputing missing values
 
-```{r}
+
+```r
 # Note that there are a number of days/intervals where there are missing values
 # (coded as 𝙽𝙰). The presence of missing days may introduce bias into some
 # calculations or summaries of the data.
@@ -94,25 +121,30 @@ daysum_imp <- group_by(activity_imputed, date) %>%
   summarise(steps=sum(steps))
 
 hist(daysum_imp$steps)
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+```r
 total.nos.mean <- as.integer(round(mean(daysum$steps),0))
 total.nos.median <- as.integer(round(median(daysum$steps),0))
 ```
 
-In the original data set there are `r no.nas` interval where no data was available. A new data set has been created where the missing values have been filled in with the 2 month avarage number of steps of the corresponding interval.
+In the original data set there are 2304 interval where no data was available. A new data set has been created where the missing values have been filled in with the 2 month avarage number of steps of the corresponding interval.
 
 This results in new values for the mean and median of total number of steps:
 
 Item   | Value
 ------ | -----
-mean   | `r total.nos.mean`
-median | `r total.nos.median`
+mean   | 9354
+median | 10395
 
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r}
+
+```r
 # For this part the 𝚠𝚎𝚎𝚔𝚍𝚊𝚢𝚜() function may be of some help here. Use
 # the dataset with the filled-in missing values for this part.
  
@@ -142,8 +174,9 @@ xyplot(data = avgsteps_imp , avg_steps~interval|factor(daytype),
        type='l',
        layout=c(1,2),
        xlab='5 min. interval', ylab='Average Number of Steps')
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
 **Conclusions:**
 

@@ -1,48 +1,28 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
-Author: R.M. de Jong
-
-
-## Loading and preprocessing the data
-
-# Read the source file into var activity
-```{r}
 library(dplyr)
-library(lattice)
+# Read the source file into var activity
 unzip("activity.zip", overwrite = TRUE)
 rawsrc <- read.csv("activity.csv", na.strings = "", stringsAsFactors = FALSE)
 
+# prepare steps
 activity <- rawsrc
 activity$steps <- as.integer(na_if(activity$steps,"NA"))
 activity$date <- as.Date(activity$date)
-```
 
-
-## What is mean total number of steps taken per day?
-
-```{r}
+# What is mean total number of steps taken per day?
 ## Calculate the total number of steps taken per day
 daysum <- group_by(activity, date) %>%
   summarise(steps=sum(steps, na.rm=TRUE))
 
-## Make a histogram of the total number of steps taken each day
+## If you do not understand the difference between a histogram and a barplot,
+## research the difference between them. Make a histogram of the total number of
+## steps taken each day
 hist(daysum$steps, breaks = 20, col="yellow")
 
 ## Calculate and report the mean and median of the total number of steps taken per day
 total.nos.mean <- as.integer(round(mean(daysum$steps, na.rm=TRUE),0))
 total.nos.median <- as.integer(round(median(daysum$steps, na.rm=TRUE),0))
-```
 
-The calculation of the total number of steps has a **mean of `r total.nos.mean`** and a **median of `r total.nos.median`**. 
-
-
-## What is the average daily activity pattern?
-
-```{r}
+# What is the average daily activity pattern?
 ## Make a time series plot (i.e. 𝚝𝚢𝚙𝚎 = "𝚕") of the 5-minute interval
 ## (x-axis) and the average number of steps taken, averaged across all days
 ## (y-axis)
@@ -56,28 +36,24 @@ plot(avgsteps$interval,avgsteps$avg_steps, type="l",
 
 ## Which 5-minute interval, on average across all the days in the dataset,
 ## contains the maximum number of steps?
-nos.max <- top_n(avgsteps,1,avg_steps)
-```
+top_n(avgsteps,1,avg_steps)
 
-The 5-minute interval with the maximum number of steps based on this set with 2 months of data appears to be on `r nos.max$interval`
+# Imputing missing values
 
-
-## Imputing missing values
-
-```{r}
 # Note that there are a number of days/intervals where there are missing values
 # (coded as 𝙽𝙰). The presence of missing days may introduce bias into some
 # calculations or summaries of the data.
 
 # 1. Calculate and report the total number of missing values in the dataset
 # (i.e. the total number of rows with 𝙽𝙰s)
-no.nas <- sum(is.na(activity$steps))
+sum(is.na(activity$steps))
  
 # 2. Devise a strategy for filling in all of the missing values in the dataset.
 # The strategy does not need to be sophisticated. For example, you could use the
 # mean/median for that day, or the mean for that 5-minute interval, etc.
 
-# >>>  I use the mean of the 5 min. interval for the selected months
+
+# Use the mean of the 5 min. interval for the selected months
 
 # 3. Create a new dataset that is equal to the original dataset but with the
 # missing data filled in.
@@ -96,24 +72,13 @@ daysum_imp <- group_by(activity_imputed, date) %>%
 
 hist(daysum_imp$steps, breaks = 20, col="yellow")
 
-total.nos.mean <- as.integer(round(mean(daysum_imp$steps),0))
-total.nos.median <- as.integer(round(median(daysum_imp$steps),0))
-```
-
-In the original data set there are `r no.nas` interval where no data was available. A new data set has been created where the missing values have been filled in with the 2 month avarage number of steps of the corresponding interval.
-
-This results in new values for the mean and median of total number of steps:
-
-Item   | Value
------- | -----
-mean   | `r total.nos.mean`
-median | `r total.nos.median`
+mean(daysum_imp$steps)
+median(daysum_imp$steps)
 
 
 
-## Are there differences in activity patterns between weekdays and weekends?
-
-```{r}
+# Are there differences in activity patterns between weekdays and weekends?
+ 
 # For this part the 𝚠𝚎𝚎𝚔𝚍𝚊𝚢𝚜() function may be of some help here. Use
 # the dataset with the filled-in missing values for this part.
  
@@ -143,11 +108,3 @@ xyplot(data = avgsteps_imp , avg_steps~interval|factor(daytype),
        type='l',
        layout=c(1,2),
        xlab='5 min. interval', ylab='Average Number of Steps')
-
-```
-
-**Conclusions:**
-
-  * During weekdays activity starts earlier than in weekends
-  * During weekdays activity concentrates in the morning whereas during weekends activity is spread across the day
-

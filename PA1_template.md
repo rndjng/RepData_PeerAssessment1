@@ -1,4 +1,5 @@
 # Reproducible Research: Peer Assessment 1
+Author: R.M. de Jong
 
 
 ## Loading and preprocessing the data
@@ -46,7 +47,7 @@ daysum <- group_by(activity, date) %>%
   summarise(steps=sum(steps, na.rm=TRUE))
 
 ## Make a histogram of the total number of steps taken each day
-hist(daysum$steps)
+hist(daysum$steps, breaks = 20, col="yellow")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
@@ -120,14 +121,14 @@ activity_imputed <- select(activity_imputed, -avg_steps)
 daysum_imp <- group_by(activity_imputed, date) %>%
   summarise(steps=sum(steps))
 
-hist(daysum_imp$steps)
+hist(daysum_imp$steps, breaks = 20, col="yellow")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
 ```r
-total.nos.mean <- as.integer(round(mean(daysum$steps),0))
-total.nos.median <- as.integer(round(median(daysum$steps),0))
+total.nos.mean <- as.integer(round(mean(daysum_imp$steps),0))
+total.nos.median <- as.integer(round(median(daysum_imp$steps),0))
 ```
 
 In the original data set there are 2304 interval where no data was available. A new data set has been created where the missing values have been filled in with the 2 month avarage number of steps of the corresponding interval.
@@ -136,8 +137,8 @@ This results in new values for the mean and median of total number of steps:
 
 Item   | Value
 ------ | -----
-mean   | 9354
-median | 10395
+mean   | 10766
+median | 10762
 
 
 
